@@ -127,18 +127,47 @@ st.plotly_chart(
 )
 
 # 4️⃣ Confusion Matrix Heatmap
+st.subheader("Confusion Matrix")
+
 conf_matrix_df = pd.DataFrame(
     conf_matrix,
-    index=['True Negative', 'True Neutral', 'True Positive'],
-    columns=['Predicted \n Negative', 'Predicted \n Neutral', 'Predicted \n Positive']
+    index=["True Negative", "True Neutral", "True Positive"],
+    columns=["Predicted Negative", "Predicted Neutral", "Predicted Positive"]
 )
 
-st.plotly_chart(
-    px.imshow(
-        conf_matrix_df,
-        text_auto=True,
-        color_continuous_scale='RdBu',
-        labels=dict(x="\nPredicted Sentiment\n", y="True Sentiment", color="Count"),
-        title="\n Confusion Matrix of Sentiment Classification Results \n"
-    ).update_xaxes(side="top")
+fig_conf_matrix = px.imshow(
+    conf_matrix_df,
+    text_auto=True,
+    color_continuous_scale="RdBu",
+    labels=dict(
+        x="Predicted Sentiment",
+        y="True Sentiment",
+        color="Count"
+    ),
+    title="Confusion Matrix of Sentiment Classification Results"
+)
+
+# 🔑 FIX SPACING HERE
+fig_conf_matrix.update_layout(
+    title=dict(
+        y=0.95,                 # Move title DOWN (closer to plot)
+        x=0.5,
+        xanchor="center",
+        yanchor="top"
+    ),
+    margin=dict(
+        t=60,                   # Reduce top margin (default is ~100)
+        b=40,
+        l=40,
+        r=40
+    )
+)
+
+fig_conf_matrix.update_xaxes(
+    side="top",
+    title_standoff=10          # Reduce space between labels and plot
+)
+
+st.plotly_chart(fig_conf_matrix, use_container_width=True)
+
 )
