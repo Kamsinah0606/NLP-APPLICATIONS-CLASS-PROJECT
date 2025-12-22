@@ -103,15 +103,15 @@ st.plotly_chart(
 
 # 2️⃣ Emotion Distribution
 emotion_counts_df = sample_df['emotion'].value_counts().reset_index()
-emotion_counts_df.columns = ['Emotion_Category', 'Count_Value']
+emotion_counts_df.columns = ['Emotion', 'Count']
 
 st.plotly_chart(
     px.bar(
         emotion_counts_df,
-        x='Emotion_Category',
-        y='Count_Value',
-        labels={'Emotion_Category':'Emotion', 'Count_Value':'Count'},
-        title="Emotion Distribution in Reviews"
+        x='Emotion',
+        y='Count',
+        labels={'Emotion':'Emotion', 'Count':'Count'},
+        title="Emotion Distribution in Reviews."
     )
 )
 
