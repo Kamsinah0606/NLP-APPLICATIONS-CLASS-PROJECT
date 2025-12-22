@@ -139,6 +139,6 @@ st.plotly_chart(
         text_auto=True,
         color_continuous_scale='RdBu',
         labels=dict(x="\nPredicted Sentiment\n", y="True Sentiment", color="Count"),
-        title="Confusion Matrix of Sentiment Classification Results"
+        title="\n Confusion Matrix of Sentiment Classification Results \n"
     ).update_xaxes(side="top")
 )
