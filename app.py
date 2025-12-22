@@ -130,7 +130,7 @@ st.plotly_chart(
 conf_matrix_df = pd.DataFrame(
     conf_matrix,
     index=['True Negative', 'True Neutral', 'True Positive'],
-    columns=['Predicted Negative', 'Predicted Neutral', 'Predicted Positive']
+    columns=['Predicted \n Negative', 'Predicted \n Neutral', 'Predicted \n Positive']
 )
 
 st.plotly_chart(
