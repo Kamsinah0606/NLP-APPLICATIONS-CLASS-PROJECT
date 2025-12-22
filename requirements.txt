@@ -1,1 +1,10 @@
+streamlit
+pandas
+numpy
+scikit-learn
+plotly
+torch
+transformers==4.38.2
+tokenizers==0.15.2
+accelerate==0.27.2
 
