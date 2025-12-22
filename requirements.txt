@@ -1,9 +1,7 @@
 streamlit
-transformers==4.38.2
-torch
 pandas
-plotly
+numpy
 scikit-learn
-tokenizers==0.15.2
-accelerate==0.27.2
-
+plotly
+transformers
+torch
