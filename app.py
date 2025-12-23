@@ -88,21 +88,6 @@ st.caption(
 )
 
 # --------------------------------------------------
-# DATAET SUMMARY
-# --------------------------------------------------
-st.markdown("### Dataset Summary")
-
-col1, col2 = st.columns(2)
-
-with col1:
-    st.metric("Raw Reviews", raw_count)
-
-with col2:
-    st.metric("Reviews After Cleaning", cleaned_count)
-
-dataset_size = len(df)
-
-# --------------------------------------------------
 # SENTIMENT ANALYSIS
 # --------------------------------------------------
 with st.spinner("Analyzing customer reviews..."):
