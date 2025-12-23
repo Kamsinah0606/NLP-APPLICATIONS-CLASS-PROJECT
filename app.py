@@ -193,9 +193,9 @@ with col2:
             y="True Label",
             color="Count"
         ),
-        Title="Confusion Matrix of Sentiment Classification Results",
         color_continuous_scale=["#FFF1B8", "#FFC72C", "#C8102E"]
     )
+    Title="Confusion Matrix of Sentiment Classification Results",
     st.plotly_chart(fig_cm, use_container_width=True)
 
 # --------------------------------------------------
