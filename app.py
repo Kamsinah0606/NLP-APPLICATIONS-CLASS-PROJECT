@@ -176,8 +176,7 @@ with col2:
         labels=dict(
             x="Predicted Label",
             y="True Label",
-            color="Count",
-             Title="Confusion Matrix of Sentiment Classification Results",
+            color="Count"
         ),
         color_continuous_scale=["#FFF1B8", "#FFC72C", "#C8102E"]
     )
