@@ -47,7 +47,7 @@ st.write(
 # --------------------------------------------------
 @st.cache_data
 def load_data():
-    df = pd.read_csv("McDonald_s_Reviews", encoding="latin1")
+    df = pd.read_csv("McDonald_s_Reviews.csv", encoding="latin1")
 
     raw_count = len(df)
 
