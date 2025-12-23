@@ -188,11 +188,11 @@ with col2:
     fig_cm = px.imshow(
         cm_df,
         text_auto=True,
-        Title="Confusion Matrix of Sentiment Classification Results",
         labels=dict(
             x="Predicted Label",
             y="True Label",
-            color="Count"
+            color="Count",
+             Title="Confusion Matrix of Sentiment Classification Results",
         ),
         color_continuous_scale=["#FFF1B8", "#FFC72C", "#C8102E"]
     )
