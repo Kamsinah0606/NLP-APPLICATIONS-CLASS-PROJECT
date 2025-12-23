@@ -47,8 +47,10 @@ st.write(
 # --------------------------------------------------
 @st.cache_data
 def load_data():
-    return pd.read_csv("McDonald_s_Reviews.csv", encoding="latin1")
-    https://raw.githubusercontent.com/Kamsinah0606/NLP-APPLICATIONS-CLASS-PROJECT/refs/heads/main/processed_mcdonalds_reviews.csv
+    DATA_URL = " https://raw.githubusercontent.com/Kamsinah0606/NLP-APPLICATIONS-CLASS-PROJECT/refs/heads/main/processed_mcdonalds_reviews.csv"
+    df = pd.read_csv(DATA_URL)
+    
+    return df
 
 df = load_data()
 
