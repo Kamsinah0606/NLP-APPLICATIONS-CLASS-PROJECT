@@ -181,18 +181,3 @@ with col2:
         color_continuous_scale=["#FFF1B8", "#FFC72C", "#C8102E"]
     )
     st.plotly_chart(fig_cm, use_container_width=True)
-
-# --------------------------------------------------
-# FOOTER
-# --------------------------------------------------
-st.markdown(
-    """
-    <hr>
-    <center>
-    <small>
-    NLP Applications Class Project | Sentiment Analysis Dashboard using Streamlit
-    </small>
-    </center>
-    """,
-    unsafe_allow_html=True
-)
