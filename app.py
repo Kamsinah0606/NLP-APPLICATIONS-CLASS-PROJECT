@@ -52,15 +52,25 @@ def load_data():
 df = load_data()
 
 # --------------------------------------------------
-# USER INPUT
+# DATA CONFIGURATION (OPTION A IMPLEMENTED)
 # --------------------------------------------------
 st.subheader("Dataset Configuration")
+
+MAX_LIMIT = 5000                     # safety cap
+dataset_size = len(df)
+max_reviews = min(dataset_size, MAX_LIMIT)
+
 sample_size = st.slider(
     "Select number of reviews for analysis",
     min_value=100,
-    max_value=2000,
+    max_value=max_reviews,
     value=1000,
     step=100
+)
+
+st.caption(
+    f"Dataset contains {dataset_size:,} reviews. "
+    f"For performance efficiency, analysis is limited to a maximum of {max_reviews:,} reviews."
 )
 
 # --------------------------------------------------
@@ -122,7 +132,7 @@ st.dataframe(
 )
 
 # --------------------------------------------------
-# MODEL EVALUATION SECTION
+# MODEL EVALUATION
 # --------------------------------------------------
 st.subheader("Model Evaluation (Sample Data)")
 
@@ -137,15 +147,11 @@ cm_df = pd.DataFrame(
     columns=["Negative", "Neutral", "Positive"]
 )
 
-# SIDE-BY-SIDE LAYOUT
 col1, col2 = st.columns(2)
 
 with col1:
     st.markdown("### Classification Report")
-    st.dataframe(
-        report_df.round(2),
-        use_container_width=True
-    )
+    st.dataframe(report_df.round(2), use_container_width=True)
 
 with col2:
     st.markdown("### Confusion Matrix of Sentiment Classification Results")
@@ -169,8 +175,7 @@ st.markdown(
     <hr>
     <center>
     <small>
-    Developed for NLP Applications Class Project |
-    Sentiment Analysis Dashboard using Streamlit
+    NLP Applications Class Project | Sentiment Analysis Dashboard using Streamlit
     </small>
     </center>
     """,
