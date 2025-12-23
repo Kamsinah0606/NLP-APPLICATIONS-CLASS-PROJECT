@@ -97,7 +97,8 @@ with col1:
 
 with col2:
     st.metric("Reviews After Cleaning", cleaned_count)
-    dataset_size = len(df)
+
+dataset_size = len(df)
 
 # --------------------------------------------------
 # SENTIMENT ANALYSIS
