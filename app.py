@@ -1,170 +1,150 @@
-# app.py
 import streamlit as st
 import pandas as pd
-import numpy as np
-from transformers import pipeline
-from sklearn.metrics import classification_report, confusion_matrix
 import plotly.express as px
+from sentiment_utils import analyze_reviews, evaluate_model
 
-# --- Streamlit Page Config ---
+# -------------------------------
+# Page Configuration
+# -------------------------------
 st.set_page_config(
-    page_title="McDonald's Reviews Sentiment & Emotion Dashboard",
+    page_title="Sentiment Analysis Dashboard",
     layout="wide"
 )
 
-st.title("🍔 McDonald's Reviews Sentiment & Emotion Analysis Dashboard")
+# -------------------------------
+# Title and Description
+# -------------------------------
+st.title("🍔 Restaurant Review Sentiment Analysis Dashboard")
+st.write(
+    "This dashboard presents sentiment and emotion analysis results "
+    "for McDonald's restaurant reviews using Transformer-based NLP models."
+)
 
-# --- Load Dataset ---
+# -------------------------------
+# Load Dataset
+# -------------------------------
 @st.cache_data
 def load_data():
-    df = pd.read_csv("McDonald_s_Reviews.csv", encoding="latin1")
-    df['rating_num'] = df['rating'].str.extract('(\d)').astype(int)
-    
-    def map_sentiment(r):
-        if r <= 2:
-            return "Negative"
-        elif r == 3:
-            return "Neutral"
-        else:
-            return "Positive"
-    
-    df['true_sentiment'] = df['rating_num'].apply(map_sentiment)
-    df = df.dropna(subset=['review'])
-    return df
+    return pd.read_csv("McDonald_s_Reviews.csv", encoding="latin1")
 
 df = load_data()
 
-st.subheader("Sample of Reviews")
-st.dataframe(df[['review', 'rating_num', 'true_sentiment']].head(10))
-
-# --- Load NLP Models ---
-@st.cache_resource
-def load_models():
-    sentiment_model = pipeline(
-        "sentiment-analysis",
-        model="distilbert-base-uncased-finetuned-sst-2-english"
-    )
-    emotion_model = pipeline(
-        "text-classification",
-        model="j-hartmann/emotion-english-distilroberta-base",
-        return_all_scores=False
-    )
-    return sentiment_model, emotion_model
-
-sentiment_model, emotion_model = load_models()
-
-# --- Sidebar Controls ---
-st.sidebar.header("Options")
+# -------------------------------
+# User Controls
+# -------------------------------
+st.sidebar.header("Analysis Settings")
 sample_size = st.sidebar.slider(
-    "Number of Reviews to Sample for Analysis", min_value=100, max_value=2000, value=1000, step=100
+    "Select number of reviews for analysis",
+    min_value=100,
+    max_value=2000,
+    value=1000,
+    step=100
 )
 
-# --- Sample Data ---
-sample_df = df.sample(sample_size, random_state=42).reset_index(drop=True)
+# -------------------------------
+# Run Analysis
+# -------------------------------
+with st.spinner("Analyzing customer reviews..."):
+    results_df = analyze_reviews(df, sample_size)
 
-# --- Run Predictions ---
-@st.cache_data
-def predict_sentiment_emotion(df):
-    df['predicted_sentiment'] = df['review'].apply(
-        lambda x: sentiment_model(x[:512])[0]['label']
+# -------------------------------
+# Sentiment Distribution
+# -------------------------------
+st.subheader("Sentiment Distribution")
+fig_sentiment = px.pie(
+    results_df,
+    names="predicted_sentiment",
+    title="Predicted Sentiment Distribution"
+)
+st.plotly_chart(fig_sentiment, use_container_width=True)
+
+# -------------------------------
+# Emotion Distribution
+# -------------------------------
+st.subheader("Emotion Distribution")
+emotion_counts = results_df["emotion"].value_counts().reset_index()
+emotion_counts.columns = ["Emotion", "Count"]
+
+fig_emotion = px.bar(
+    emotion_counts,
+    x="Emotion",
+    y="Count",
+    title="Emotion Distribution"
+)
+st.plotly_chart(fig_emotion, use_container_width=True)
+
+# -------------------------------
+# Rating vs Predicted Sentiment
+# -------------------------------
+st.subheader("Rating vs Predicted Sentiment")
+fig_rating = px.histogram(
+    results_df,
+    x="rating_num",
+    color="predicted_sentiment",
+    barmode="group",
+    title="Rating vs Predicted Sentiment"
+)
+st.plotly_chart(fig_rating, use_container_width=True)
+
+# -------------------------------
+# Sample Review Predictions
+# -------------------------------
+st.subheader("Sample Review Predictions")
+st.dataframe(
+    results_df[
+        ["review", "rating_num", "true_sentiment", "predicted_sentiment", "emotion"]
+    ].head(10),
+    use_container_width=True
+)
+
+# -------------------------------
+# Model Evaluation Section
+# -------------------------------
+st.subheader("Model Evaluation (Sample Data)")
+
+# Get evaluation results
+report_df, cm = evaluate_model(
+    results_df["true_sentiment"],
+    results_df["predicted_sentiment"]
+)
+
+# Create confusion matrix dataframe
+cm_df = pd.DataFrame(
+    cm,
+    index=["Negative", "Neutral", "Positive"],
+    columns=["Negative", "Neutral", "Positive"]
+)
+
+# Layout: Side-by-side
+col1, col2 = st.columns(2)
+
+with col1:
+    st.markdown("### Classification Report")
+    st.dataframe(
+        report_df.round(2),
+        use_container_width=True
     )
-    df['predicted_sentiment'] = df['predicted_sentiment'].map({
-        "POSITIVE": "Positive",
-        "NEGATIVE": "Negative"
-    })
-    df['emotion'] = df['review'].apply(
-        lambda x: emotion_model(x[:512])[0]['label']
+
+with col2:
+    st.markdown("### Confusion Matrix of Sentiment Classification Results")
+    fig_cm = px.imshow(
+        cm_df,
+        text_auto=True,
+        labels=dict(
+            x="Predicted Label",
+            y="True Label",
+            color="Count"
+        ),
+        title="Confusion Matrix"
     )
-    return df
+    st.plotly_chart(fig_cm, use_container_width=True)
 
-with st.spinner("Running sentiment & emotion analysis..."):
-    sample_df = predict_sentiment_emotion(sample_df)
-
-st.success("Analysis Complete!")
-
-# --- Metrics ---
-st.subheader("Model Evaluation (Sampled Data)")
-
-conf_matrix = confusion_matrix(sample_df['true_sentiment'], sample_df['predicted_sentiment'])
-st.text("Classification Report:")
-st.text(classification_report(sample_df['true_sentiment'], sample_df['predicted_sentiment']))
-
-# --- Visualizations ---
-st.subheader("Visualizations")
-
-# 1️⃣ Sentiment Distribution
-st.plotly_chart(
-    px.pie(
-        sample_df,
-        names='predicted_sentiment',
-        title="Sentiment Distribution of McDonald's Reviews"
-    )
+# -------------------------------
+# Footer
+# -------------------------------
+st.markdown("---")
+st.markdown(
+    "📌 **Note:** The evaluation results are generated from a sampled subset "
+    "of the dataset to ensure computational efficiency while maintaining "
+    "representative sentiment distribution."
 )
-
-# 2️⃣ Emotion Distribution
-emotion_counts_df = sample_df['emotion'].value_counts().reset_index()
-emotion_counts_df.columns = ['Emotion', 'Count']
-
-st.plotly_chart(
-    px.bar(
-        emotion_counts_df,
-        x='Emotion',
-        y='Count',
-        labels={'Emotion':'Emotion', 'Count':'Count'},
-        title="Emotion Distribution in Reviews."
-    )
-)
-
-# 3️⃣ Rating vs Predicted Sentiment
-st.plotly_chart(
-    px.histogram(
-        sample_df,
-        x='rating_num',
-        color='predicted_sentiment',
-        title="Rating vs Predicted Sentiment",
-        barmode='group'
-    )
-)
-
-# --- Confusion Matrix Heatmap ---
-conf_matrix_df = pd.DataFrame(
-    conf_matrix,
-    index=['True Negative', 'True Neutral', 'True Positive'],
-    columns=['Predicted Negative', 'Predicted Neutral', 'Predicted Positive']
-)
-
-fig_conf_matrix = px.imshow(
-    conf_matrix_df,
-    text_auto=True,
-    color_continuous_scale='RdBu'
-)
-
-# 🔧 FIX SPACING HERE
-fig_conf_matrix.update_layout(
-    title=dict(
-        text="Confusion Matrix of Sentiment Classification Results",
-        y=0.96,          # Move title closer to plot
-        x=0.5,
-        xanchor="center",
-        yanchor="top",
-        pad=dict(t=5)    # Reduce top padding
-    ),
-    margin=dict(
-        t=70,            # Reduce top margin
-        b=40
-    )
-)
-
-fig_conf_matrix.update_xaxes(
-    side="top",
-    title_text="Predicted Sentiment",
-    title_standoff=10,  # 🔥 KEY: reduces space to tick labels
-    tickangle=0
-)
-
-fig_conf_matrix.update_yaxes(
-    title_text="True Sentiment"
-)
-
-st.plotly_chart(fig_conf_matrix, use_container_width=True)
-
