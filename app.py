@@ -51,7 +51,9 @@ def load_data():
 
     raw_count = len(df)
 
-    # --- DATA CLEANING ---
+# --------------------------------------------------
+# DATA CLEANING
+# --------------------------------------------------
     df = df.dropna(subset=["review", "rating"])
     df = df[df["review"].str.strip() != ""]
 
@@ -64,7 +66,7 @@ df, raw_count, cleaned_count = load_data()
 
 
 # --------------------------------------------------
-# DATA CONFIGURATION (OPTION A IMPLEMENTED)
+# DATA CONFIGURATION 
 # --------------------------------------------------
 st.subheader("Dataset Configuration")
 
@@ -141,6 +143,7 @@ st.subheader("Rating vs Predicted Sentiment")
 fig_rating = px.histogram(
     results_df,
     x="rating_num",
+    title="Rating vs Predicted Sentiment",
     color="predicted_sentiment",
     barmode="group",
     color_discrete_sequence=["#C8102E", "#FFC72C", "#DA291C"]
@@ -190,6 +193,7 @@ with col2:
             y="True Label",
             color="Count"
         ),
+        Title="Confusion Matrix of Sentiment Classification Results",
         color_continuous_scale=["#FFF1B8", "#FFC72C", "#C8102E"]
     )
     st.plotly_chart(fig_cm, use_container_width=True)
