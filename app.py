@@ -166,7 +166,7 @@ col1, col2 = st.columns(2)
 
 with col1:
     st.markdown("### Classification Report")
-    st.dataframe(report_df.round(2), use_container_width=True)
+    st.dataframe(report_df.round(2))
 
 with col2:
     st.markdown("### Confusion Matrix of Sentiment Classification Results")
