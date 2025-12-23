@@ -47,12 +47,21 @@ st.write(
 # --------------------------------------------------
 @st.cache_data
 def load_data():
-    DATA_URL = " https://raw.githubusercontent.com/Kamsinah0606/NLP-APPLICATIONS-CLASS-PROJECT/refs/heads/main/processed_mcdonalds_reviews.csv"
-    df = pd.read_csv(DATA_URL)
-    
-    return df
+    df = pd.read_csv("McDonald_s_Reviews.csv", encoding="latin1")
 
-df = load_data()
+    raw_count = len(df)
+
+    # --- DATA CLEANING ---
+    df = df.dropna(subset=["review", "rating"])
+    df = df[df["review"].str.strip() != ""]
+
+    cleaned_count = len(df)
+
+    return df, raw_count, cleaned_count
+
+
+df, raw_count, cleaned_count = load_data()
+
 
 # --------------------------------------------------
 # DATA CONFIGURATION (OPTION A IMPLEMENTED)
