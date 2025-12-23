@@ -1,7 +1,8 @@
 from transformers import pipeline
 import pandas as pd
+from sklearn.metrics import classification_report, confusion_matrix
 
-# Load models once (IMPORTANT for Streamlit performance)
+# Load models once
 sentiment_model = pipeline(
     "sentiment-analysis",
     model="distilbert-base-uncased-finetuned-sst-2-english"
@@ -42,3 +43,19 @@ def analyze_reviews(df, sample_size=1000):
 
     return df
 
+def evaluate_model(y_true, y_pred):
+    report_dict = classification_report(
+        y_true,
+        y_pred,
+        output_dict=True,
+        zero_division=0
+    )
+    report_df = pd.DataFrame(report_dict).transpose()
+
+    cm = confusion_matrix(
+        y_true,
+        y_pred,
+        labels=["Negative", "Neutral", "Positive"]
+    )
+
+    return report_df, cm
