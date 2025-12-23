@@ -188,6 +188,7 @@ with col2:
     fig_cm = px.imshow(
         cm_df,
         text_auto=True,
+        Title="Confusion Matrix of Sentiment Classification Results",
         labels=dict(
             x="Predicted Label",
             y="True Label",
@@ -195,7 +196,6 @@ with col2:
         ),
         color_continuous_scale=["#FFF1B8", "#FFC72C", "#C8102E"]
     )
-    Title="Confusion Matrix of Sentiment Classification Results",
     st.plotly_chart(fig_cm, use_container_width=True)
 
 # --------------------------------------------------
