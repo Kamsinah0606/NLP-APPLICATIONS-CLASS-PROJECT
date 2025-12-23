@@ -14,7 +14,7 @@ st.set_page_config(
 # -------------------------------
 # Title and Description
 # -------------------------------
-st.title("🍔 Restaurant Review Sentiment Analysis Dashboard")
+st.title("🍔 MacDonald Review Sentiment Analysis Dashboard")
 st.write(
     "This dashboard presents sentiment and emotion analysis results "
     "for McDonald's restaurant reviews using Transformer-based NLP models."
